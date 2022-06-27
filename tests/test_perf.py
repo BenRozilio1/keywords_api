@@ -1,6 +1,4 @@
 import random
-import string
-
 from fastapi.testclient import TestClient
 
 from src.main import app

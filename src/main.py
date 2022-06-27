@@ -1,15 +1,14 @@
-import asyncio
 import datetime
 import logging
 import time
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from requests import Request
 
 from src.db import Database
 from src.models import Event
-from src.services import handle_event
+from src.services import EventService
 
 app = FastAPI()
 db = Database()
@@ -25,10 +24,10 @@ async def add_process_time_header(request: Request, call_next):
 
 
 @app.post("/events", status_code=201)
-async def events(event: Event):
+def events(event: Event):
     logging.info("Event received: %s", event.json())
     text = event.text
-    data = await asyncio.to_thread(handle_event, text)
+    data = EventService.handle_event(text)
     db.insert(datetime.datetime.now().timestamp(), data)
     return data
 
