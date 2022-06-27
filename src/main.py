@@ -1,26 +1,35 @@
+import asyncio
 import datetime
+import logging
+import time
 
 import uvicorn
 from fastapi import FastAPI
-from pydantic import BaseModel, Field
+from requests import Request
 
 from src.db import Database
+from src.models import Event
 from src.services import handle_event
 
 app = FastAPI()
 db = Database()
 
 
-class Event(BaseModel):
-    created: float = Field(default_factory=datetime.datetime.now().timestamp)
-    text: str
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start_time
+    response.headers["X-Process-Time"] = str(process_time)
+    return response
 
 
 @app.post("/events", status_code=201)
-def events(event: Event):
+async def events(event: Event):
+    logging.info("Event received: %s", event.json())
     text = event.text
-    data = handle_event(text)
-    db.insert(event.created, data)
+    data = await asyncio.to_thread(handle_event, text)
+    db.insert(datetime.datetime.now().timestamp(), data)
     return data
 
 
