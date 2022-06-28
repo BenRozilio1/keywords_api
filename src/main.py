@@ -3,7 +3,7 @@ import logging
 import time
 
 import uvicorn
-from fastapi import FastAPI, Depends, Request, Form
+from fastapi import FastAPI, Depends, Request, Form, APIRouter
 
 from src.db import Database
 from src.models import Event
@@ -11,6 +11,7 @@ from src.services import EventService
 
 logging.basicConfig(level=logging.INFO)
 app = FastAPI()
+prefix_router = APIRouter(prefix="/v1/api")
 db = Database()
 
 
@@ -23,7 +24,7 @@ async def add_process_time_header(request: Request, call_next):
     return response
 
 
-@app.post("/events", status_code=201)
+@prefix_router.post("/events", status_code=201)
 async def events(request: Request):
     body = await request.body()
     text = body.decode("utf-8")
@@ -33,16 +34,18 @@ async def events(request: Request):
     return "event received"
 
 
-@app.get("/stats", status_code=200)
+@prefix_router.get("/stats", status_code=200)
 def stats(interval: int = 0):
     result = db.query(interval)
     return result
 
 
-@app.get("/hello", status_code=200)
-def hello():
-    return "hi"
+@prefix_router.get("/alive", status_code=200)
+def alive():
+    return "I'm here"
 
+
+app.include_router(prefix_router)
 
 if __name__ == '__main__':
     uvicorn.run(app, port=8000, debug=True)

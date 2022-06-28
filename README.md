@@ -17,9 +17,9 @@ This API written in Python and use FastApi Framework.
 
 ### Docker Install
 
-    docker build -t keywords-task:latest .
+    docker build -t keywords-api:latest .
    
-    docker run -d -p 8000:80 keywords-task
+    docker run -d -p 80:80 --name keywords-api keywords-api:latest 
 
 <br/>
 
@@ -30,7 +30,7 @@ post new event.
 
 `POST //events`
 
-    curl -X POST http://localhost:8000/events -d "Checkpoint and Avanan is leading in cyber security products."
+    curl -X POST http://localhost/v1/api/events -d "Checkpoint and Avanan is leading in cyber security products."
 
 Important: the data after flag (-d) need to be wrapped in double-quoted.
 
@@ -60,7 +60,7 @@ Get
 
 `GET /stats?interval=<int>`
 
-    curl http://localhost:8000/stats?interval=60
+    curl http://localhost/v1/api/stats?interval=60
 
 ### Response
 

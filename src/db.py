@@ -10,9 +10,10 @@ class Database:
 
     def query(self, interval: int) -> dict[str, int]:
         start_time = datetime.datetime.now().timestamp() - interval
-        data = [data for timestamp, data in self.data.items() if timestamp >= start_time]
+        relevant_timestamps = list(filter(lambda x: x > start_time, self.data))
         result = {}
-        for record in data:
-            for key, value in record.items():
-                result[key] = result.get(key, 0) + value
+
+        for timestamp in relevant_timestamps:
+            for keyword, value in self.data[timestamp].items():
+                result[keyword] = result.get(keyword, 0) + value
         return result
