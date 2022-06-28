@@ -1,21 +1,19 @@
 # keywords_api
 
-Get and Store data with keywords_api. <br /> REST API service for storing keywords
-from the daily events traffic and display useful data about them.<br />
+Get and Store data with keywords_api. <br /> REST API service for storing specific keywords
+from the daily events traffic. display useful data about the keywords.<br />
 
 This API written in Python and use FastApi Framework.
 
 ## Install
 
-    pip install fastapi
-
-    pip install uvicorn
+    pip install -r requirements.txt
 
 ### Run the app
 
     uvicorn src.main:app --reload
 
-### Docker Install
+### Docker Install & Run
 
     docker build -t keywords-api:latest .
    
@@ -30,7 +28,7 @@ post new event.
 
 `POST //events`
 
-    curl -X POST http://localhost/v1/api/events -d "Checkpoint and Avanan is leading in cyber security products."
+    curl -X POST http://localhost/api/v1/events -d "Checkpoint and Avanan is leading in cyber security products."
 
 Important: the data after flag (-d) need to be wrapped in double-quoted.
 
@@ -50,7 +48,7 @@ Important: the data after flag (-d) need to be wrapped in double-quoted.
 
 ### Request
 
-Get Json with the number occurrence of specific keywords in the received interval time.
+Get Json with the number occurrence of specific keywords in the received interval time (seconds).
 
 currently, api supported keywords: "checkpoint", "avanan", "email", "security"
 
@@ -60,7 +58,7 @@ Get
 
 `GET /stats?interval=<int>`
 
-    curl http://localhost/v1/api/stats?interval=60
+    curl http://localhost/api/v1/stats?interval=60
 
 ### Response
 

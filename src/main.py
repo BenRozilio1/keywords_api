@@ -1,17 +1,14 @@
 import datetime
 import logging
 import time
-
 import uvicorn
-from fastapi import FastAPI, Depends, Request, Form, APIRouter
-
+from fastapi import FastAPI, Request, APIRouter
 from src.db import Database
-from src.models import Event
 from src.services import EventService
 
 logging.basicConfig(level=logging.INFO)
 app = FastAPI()
-prefix_router = APIRouter(prefix="/v1/api")
+prefix_router = APIRouter(prefix="/api/v1")
 db = Database()
 
 
@@ -48,4 +45,4 @@ def alive():
 app.include_router(prefix_router)
 
 if __name__ == '__main__':
-    uvicorn.run(app, port=8000, debug=True)
+    uvicorn.run(app, port=80, debug=False)
