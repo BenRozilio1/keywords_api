@@ -3,13 +3,13 @@ import logging
 import time
 
 import uvicorn
-from fastapi import FastAPI, Depends
-from requests import Request
+from fastapi import FastAPI, Depends, Request, Form
 
 from src.db import Database
 from src.models import Event
 from src.services import EventService
 
+logging.basicConfig(level=logging.INFO)
 app = FastAPI()
 db = Database()
 
@@ -24,18 +24,24 @@ async def add_process_time_header(request: Request, call_next):
 
 
 @app.post("/events", status_code=201)
-def events(event: Event):
-    logging.info("Event received: %s", event.json())
-    text = event.text
+async def events(request: Request):
+    body = await request.body()
+    text = body.decode("utf-8")
+    logging.info("Event received: %s", text)
     data = EventService.handle_event(text)
     db.insert(datetime.datetime.now().timestamp(), data)
-    return data
+    return "event received"
 
 
-@app.get("/stats/{interval:int}", status_code=200)
-def stats(interval: int):
+@app.get("/stats", status_code=200)
+def stats(interval: int = 0):
     result = db.query(interval)
     return result
+
+
+@app.get("/hello", status_code=200)
+def hello():
+    return "hi"
 
 
 if __name__ == '__main__':
