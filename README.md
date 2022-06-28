@@ -11,7 +11,7 @@ This API written in Python and use FastApi Framework.
 
 ### Run the app
 
-    uvicorn src.main:app --reload
+    uvicorn src.main:app --reload --port 80
 
 ### Docker Install & Run
 
